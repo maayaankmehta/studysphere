@@ -1,0 +1,296 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  --background: #0b0c10; /* deep black */
+  --foreground: #e6e9ef; /* soft white */
+  --card: #0f1116; /* dark surface */
+  --primary: #b4ff3b; /* neon-lime brand */
+  --accent: #6b4eff; /* purple glow */
+  --destructive: oklch(0.577 0.245 27.325);
+  --destructive-foreground: oklch(0.577 0.245 27.325);
+  --border: color-mix(in oklab, var(--foreground) 12%, transparent);
+  --input: color-mix(in oklab, var(--foreground) 12%, transparent);
+  --ring: color-mix(in oklab, var(--accent) 40%, transparent);
+  --chart-1: oklch(0.646 0.222 41.116);
+  --chart-2: oklch(0.6 0.118 184.704);
+  --chart-3: oklch(0.398 0.07 227.392);
+  --chart-4: oklch(0.828 0.189 84.429);
+  --chart-5: oklch(0.769 0.188 70.08);
+  --radius: 14px;
+  --sidebar: #0b0c10;
+  --sidebar-foreground: #e6e9ef;
+  --sidebar-primary: #b4ff3b;
+  --sidebar-primary-foreground: #0b0c10;
+  --sidebar-accent: #6b4eff;
+  --sidebar-accent-foreground: #e6e9ef;
+  --sidebar-border: color-mix(in oklab, var(--foreground) 12%, transparent);
+  --sidebar-ring: color-mix(in oklab, var(--accent) 40%, transparent);
+
+  /* derive from core colors */
+  --muted: color-mix(in oklab, var(--card) 88%, var(--background));
+  --muted-foreground: color-mix(in oklab, var(--foreground) 60%, transparent);
+
+  --primary-foreground: #0b0c10;
+  --secondary: color-mix(in oklab, var(--card) 92%, var(--background));
+  --secondary-foreground: var(--foreground);
+  --accent-foreground: var(--foreground);
+
+  /* glass tokens */
+  --glass-bg: color-mix(in oklab, var(--card) 70%, transparent);
+  --glass-border: color-mix(in oklab, var(--foreground) 10%, transparent);
+  --glass-shadow: 0 6px 30px color-mix(in oklab, var(--accent) 12%, transparent);
+  --glow: 0 0 24px color-mix(in oklab, var(--primary) 42%, transparent);
+
+  /* Updated font variable to Inter */
+  --font-inter: "Inter", sans-serif;
+  --font-sans: var(--font-inter);
+  --font-mono: var(--font-inter);
+}
+
+.dark {
+  /* keep the same palette in dark; intensity handled by transparency above */
+  --background: #1c1e26; /* deep black */
+  --foreground: #d0d6df; /* soft white */
+  --card: #181a21; /* dark surface */
+  --primary: #a2ff8a; /* neon-lime brand */
+  --accent: #b487ff; /* purple glow */
+  --destructive: oklch(0.396 0.141 25.723);
+  --destructive-foreground: oklch(0.637 0.237 25.331);
+  --border: color-mix(in oklab, var(--foreground) 12%, transparent);
+  --input: color-mix(in oklab, var(--foreground) 12%, transparent);
+  --ring: color-mix(in oklab, var(--accent) 40%, transparent);
+  --chart-1: oklch(0.488 0.243 264.376);
+  --chart-2: oklch(0.696 0.17 162.48);
+  --chart-3: oklch(0.769 0.188 70.08);
+  --chart-4: oklch(0.627 0.265 303.9);
+  --chart-5: oklch(0.645 0.246 16.439);
+  --sidebar: #1c1e26;
+  --sidebar-foreground: #d0d6df;
+  --sidebar-primary: #a2ff8a;
+  --sidebar-primary-foreground: #1c1e26;
+  --sidebar-accent: #b487ff;
+  --sidebar-accent-foreground: #d0d6df;
+  --sidebar-border: color-mix(in oklab, var(--foreground) 12%, transparent);
+  --sidebar-ring: color-mix(in oklab, var(--accent) 40%, transparent);
+}
+
+/* semantic tokens to Tailwind */
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+/* global base stays */
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground antialiased font-sans;
+  }
+}
+
+/* Liquid-glass utilities */
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+}
+
+.btn-primary {
+  @apply inline-flex items-center justify-center rounded-full px-4 py-2 text-sm font-semibold transition;
+  color: var(--primary-foreground);
+  background: var(--primary);
+  box-shadow: var(--glow);
+}
+.btn-primary:hover {
+  filter: brightness(1.05);
+}
+
+.btn-ghost {
+  @apply inline-flex items-center justify-center rounded-full px-4 py-2 text-sm transition;
+  background: color-mix(in oklab, var(--card) 30%, transparent);
+  border: 1px solid var(--glass-border);
+}
+.btn-ghost:hover {
+  background: color-mix(in oklab, var(--card) 45%, transparent);
+}
+
+.link {
+  @apply font-medium;
+  color: color-mix(in oklab, var(--foreground) 86%, var(--accent));
+}
+.link:hover {
+  text-shadow: 0 0 8px color-mix(in oklab, var(--accent) 40%, transparent);
+}
+
+/* Card shell */
+.card {
+  @apply rounded-2xl p-4;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+}
+
+/* Pills and badges */
+.pill {
+  @apply rounded-full px-3 py-1 text-xs font-medium;
+  background: color-mix(in oklab, var(--accent) 24%, transparent);
+  border: 1px solid var(--glass-border);
+}
+
+/* Progress (XP) */
+.xp-track {
+  @apply w-full rounded-full h-3 overflow-hidden;
+  background: color-mix(in oklab, var(--card) 65%, transparent);
+  border: 1px solid var(--glass-border);
+}
+.xp-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--primary), color-mix(in oklab, var(--primary) 70%, var(--accent)));
+  box-shadow: var(--glow);
+}
+
+/* Focus ring */
+:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+/* ---------------------------------------
+   add flowing aurora background
+   --------------------------------------- */
+.aurora {
+  position: fixed;
+  inset: 0;
+  z-index: -1; /* sit behind content */
+  pointer-events: none; /* don't block clicks */
+  opacity: 0.6; /* subtle by default */
+  filter: saturate(110%);
+}
+
+.aurora > span {
+  position: absolute;
+  width: 60vw;
+  height: 60vw;
+  border-radius: 50%;
+  filter: blur(60px);
+  mix-blend-mode: screen;
+  will-change: transform, opacity;
+}
+
+/* Purple accent blob */
+.aurora .a1 {
+  left: -10%;
+  top: -20%;
+  background: radial-gradient(
+    35% 35% at 40% 40%,
+    color-mix(in oklab, var(--color-accent) 65%, transparent),
+    transparent 60%
+  );
+  animation: auroraFloat1 22s ease-in-out infinite alternate;
+}
+
+/* Neon-lime primary blob */
+.aurora .a2 {
+  right: -15%;
+  top: 10%;
+  background: radial-gradient(
+    35% 35% at 50% 50%,
+    color-mix(in oklab, var(--color-primary) 55%, transparent),
+    transparent 60%
+  );
+  animation: auroraFloat2 26s ease-in-out infinite alternate;
+}
+
+/* Dark glow helper to deepen corners */
+.aurora .a3 {
+  left: 10%;
+  bottom: -20%;
+  background: radial-gradient(
+    30% 30% at 30% 60%,
+    color-mix(in oklab, var(--color-accent) 30%, transparent),
+    transparent 60%
+  );
+  animation: auroraFloat3 28s ease-in-out infinite alternate;
+}
+
+@keyframes auroraFloat1 {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+    opacity: 0.85;
+  }
+  50% {
+    transform: translate3d(6%, 4%, 0) scale(1.05);
+    opacity: 0.7;
+  }
+  100% {
+    transform: translate3d(10%, -2%, 0) scale(1.1);
+    opacity: 0.65;
+  }
+}
+@keyframes auroraFloat2 {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+    opacity: 0.75;
+  }
+  50% {
+    transform: translate3d(-6%, 2%, 0) scale(1.06);
+    opacity: 0.65;
+  }
+  100% {
+    transform: translate3d(-10%, -6%, 0) scale(1.12);
+    opacity: 0.6;
+  }
+}
+@keyframes auroraFloat3 {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+    opacity: 0.7;
+  }
+  50% {
+    transform: translate3d(4%, -4%, 0) scale(1.04);
+    opacity: 0.62;
+  }
+  100% {
+    transform: translate3d(8%, -10%, 0) scale(1.08);
+    opacity: 0.55;
+  }
+}
