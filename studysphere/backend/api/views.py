@@ -3,7 +3,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from django.utils import timezone
-from datetime import timedelta
+from datetime import timedelta, datetime
 from django.db.models import Count, Q
 
 from .models import User, StudySession, StudyGroup, SessionRSVP, GroupMembership
@@ -42,6 +42,39 @@ class StudySessionViewSet(viewsets.ModelViewSet):
                 {'detail': 'You have already RSVP\'d to this session'},
                 status=status.HTTP_400_BAD_REQUEST
             )
+        
+        # Check if session is in the past
+        # Try to parse date/time to check validity
+        if session.date and session.time:
+            try:
+                # Handle ISO format YYYY-MM-DD
+                if '-' in session.date and ':' in session.time:
+                     # Check if time has range "8:00 - 10:00" -> take first part
+                     time_part = session.time.split('-')[0].strip() if '-' in session.time else session.time
+                     
+                     # Simple ISO parsing attempt
+                     session_datetime_str = f"{session.date} {time_part}"
+                     # Use flexible parsing if possible, but strptime is strict. 
+                     # Given our Create Session enforces YYYY-MM-DD and HH:MM, this should cover new sessions.
+                     # We can try multiple formats if needed.
+                     
+                     try:
+                         dt = datetime.strptime(session_datetime_str, "%Y-%m-%d %H:%M")
+                     except ValueError:
+                         # Try AM/PM format just in case
+                         dt = datetime.strptime(session_datetime_str, "%Y-%m-%d %I:%M %p")
+
+                     dt = timezone.make_aware(dt)
+                     
+                     if dt < timezone.now():
+                         return Response(
+                             {'detail': 'Cannot RSVP to a past session'},
+                             status=status.HTTP_400_BAD_REQUEST
+                         )
+            except Exception as e:
+                # If parsing fails, we log it but don't block (to avoid breaking legacy/mock data RSVPs)
+                print(f"Date parsing error for session {session.id}: {e}")
+                pass
         
         # Create RSVP
         SessionRSVP.objects.create(user=request.user, session=session)

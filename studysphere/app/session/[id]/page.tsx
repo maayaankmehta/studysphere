@@ -54,7 +54,28 @@ export default function SessionDetailPage() {
   const checkEventPassed = (dateStr: string, timeStr: string) => {
     try {
       if (!dateStr || !timeStr) return false
-
+      
+      // Check for ISO format (YYYY-MM-DD) which is what our create form sends
+      if (dateStr.match(/^\d{4}-\d{2}-\d{2}$/)) {
+         // handle time format HH:MM or HH:MM:SS
+         let dateTimeStr = `${dateStr}T${timeStr}`;
+         // If time is just HH:MM, append :00 if needed by Date constructor? 
+         // actually new Date("2023-01-01T12:00") works in modern browsers.
+         // But let's be safe. If timeStr contains AM/PM or ranges, we need to parse it.
+         
+         if (timeStr.includes(" ") || timeStr.includes("AM") || timeStr.includes("PM")) {
+             // Fallback to legacy parsing if it has spaces or AM/PM, assuming date is also legacy? 
+             // Or maybe date is YYYY-MM-DD but time is "8:00 AM"?
+             // If date is YYYY-MM-DD, strict parsing is better.
+             // Let's just try to create a Date object directly first.
+             const d = new Date(`${dateStr} ${timeStr}`);
+             if (!isNaN(d.getTime())) return new Date() > d;
+         } else {
+             // Standard ISO-like
+             const d = new Date(`${dateStr}T${timeStr}`);
+             if (!isNaN(d.getTime())) return new Date() > d;
+         }
+      }
       // Handle various date formats including "Wednesday, October 22nd"
       let cleanDate = dateStr
 
@@ -261,7 +282,7 @@ export default function SessionDetailPage() {
                 <div className="space-y-3">
                   <div className="p-4 bg-muted rounded-lg text-center border border-border">
                     <Clock size={24} className="text-muted-foreground mx-auto mb-2" />
-                    <p className="text-sm font-semibold text-muted-foreground">Event has passed</p>
+                    <p className="text-sm font-semibold text-muted-foreground">Event over</p>
                     <p className="text-xs text-muted-foreground mt-1 mb-3">
                       This session is no longer accepting RSVPs
                     </p>

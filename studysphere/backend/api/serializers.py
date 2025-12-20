@@ -1,4 +1,6 @@
 from rest_framework import serializers
+from django.utils import timezone
+from datetime import datetime
 from .models import User, StudySession, StudyGroup, SessionRSVP, GroupMembership, Badge
 
 
@@ -119,6 +121,29 @@ class StudySessionCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = StudySession
         fields = ['title', 'course_code', 'description', 'date', 'time', 'location', 'group']
+
+    def validate(self, data):
+        """Check that the session is not in the past"""
+        date_str = data.get('date')
+        time_str = data.get('time')
+
+        if date_str and time_str:
+            try:
+                # Try to parse standard YYYY-MM-DD and HH:MM
+                # Note: This assumes the frontend sends this format.
+                # If using text inputs (like "Wednesday..."), this validation might need to be skipped or smarter.
+                # But since we control the frontend form now, we expect ISO format.
+                if '-' in date_str and ':' in time_str:
+                     session_datetime = datetime.strptime(f"{date_str} {time_str}", "%Y-%m-%d %H:%M")
+                     session_datetime = timezone.make_aware(session_datetime)
+                     
+                     if session_datetime < timezone.now():
+                         raise serializers.ValidationError("Cannot create a study session for a date that has already passed.")
+            except ValueError:
+                # Iterate or ignore if format is different (e.g. legacy or free text)
+                pass
+        
+        return data
 
 
 class LeaderboardSerializer(serializers.ModelSerializer):
