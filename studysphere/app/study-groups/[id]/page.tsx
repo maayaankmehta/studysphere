@@ -178,42 +178,87 @@ export default function StudyGroupDetailPage() {
             </Card>
 
             {/* Sessions Section */}
-            <div className="space-y-4">
-              <h3 className="text-2xl font-bold">Upcoming Sessions</h3>
-              {sessions && sessions.filter((session: any) => !checkEventPassed(session.date, session.time)).length > 0 ? (
-                <div className="space-y-3">
-                  {sessions
-                    .filter((session: any) => !checkEventPassed(session.date, session.time))
-                    .map((session: any) => (
-                    <Card key={session.id} className="glass-card p-4">
-                      <Link href={`/session/${session.id}`} className="block hover:opacity-80 transition-opacity">
-                        <div className="flex items-start justify-between gap-4">
-                          <div className="flex-1">
-                            <h4 className="font-semibold mb-1">{session.title}</h4>
-                            <p className="text-sm text-muted-foreground mb-2">{session.course_code}</p>
-                            <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                              <span>📅 {session.date}</span>
-                              <span>🕒 {session.time}</span>
-                              <span>📍 {session.location}</span>
+            <div className="space-y-8">
+              {/* Upcoming Sessions */}
+              <div className="space-y-4">
+                <h3 className="text-2xl font-bold">Upcoming Sessions</h3>
+                {sessions && sessions.filter((session: any) => !checkEventPassed(session.date, session.time)).length > 0 ? (
+                  <div className="space-y-3">
+                    {sessions
+                      .filter((session: any) => !checkEventPassed(session.date, session.time))
+                      .map((session: any) => (
+                      <Card key={session.id} className="glass-card p-4">
+                        <Link href={`/session/${session.id}`} className="block hover:opacity-80 transition-opacity">
+                          <div className="flex items-start justify-between gap-4">
+                            <div className="flex-1">
+                              <h4 className="font-semibold mb-1">{session.title}</h4>
+                              <p className="text-sm text-muted-foreground mb-2">{session.course_code}</p>
+                              <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                                <span>📅 {session.date}</span>
+                                <span>🕒 {session.time}</span>
+                                <span>📍 {session.location}</span>
+                              </div>
+                            </div>
+                            <Badge variant="secondary" className="text-xs">
+                              {session.attendees_count || 0} going
+                            </Badge>
+                          </div>
+                        </Link>
+                      </Card>
+                    ))}
+                  </div>
+                ) : (
+                  <Card className="glass-card p-8 text-center border border-border/50">
+                    <p className="text-muted-foreground">
+                      {isMember
+                        ? "No upcoming sessions. Check the Discover page to create one!"
+                        : "Join the group to see upcoming sessions"}
+                    </p>
+                  </Card>
+                )}
+              </div>
+
+              {/* Previous Sessions */}
+              <div className="space-y-4">
+                <h3 className="text-2xl font-bold">Previous Sessions</h3>
+                {sessions && sessions.filter((session: any) => checkEventPassed(session.date, session.time)).length > 0 ? (
+                  <div className="space-y-3">
+                    {sessions
+                      .filter((session: any) => checkEventPassed(session.date, session.time))
+                      .map((session: any) => (
+                      <Card key={session.id} className="glass-card p-4 opacity-75">
+                        <Link href={`/session/${session.id}`} className="block hover:opacity-100 transition-opacity">
+                          <div className="flex items-start justify-between gap-4">
+                            <div className="flex-1">
+                              <h4 className="font-semibold mb-1 text-muted-foreground">{session.title}</h4>
+                              <p className="text-sm text-muted-foreground mb-2">{session.course_code}</p>
+                              <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                                <span>📅 {session.date}</span>
+                                <span>🕒 {session.time}</span>
+                                <span>📍 {session.location}</span>
+                              </div>
+                            </div>
+                            <div className="flex flex-col items-end gap-2">
+                              <Badge variant="outline" className="text-xs">
+                                Completed
+                              </Badge>
+                              <span className="text-xs text-muted-foreground">
+                                {session.attendees_count || 0} attended
+                              </span>
                             </div>
                           </div>
-                          <Badge variant="secondary" className="text-xs">
-                            {session.attendees_count || 0} going
-                          </Badge>
-                        </div>
-                      </Link>
-                    </Card>
-                  ))}
-                </div>
-              ) : (
-                <Card className="glass-card p-8 text-center border border-border/50">
-                  <p className="text-muted-foreground">
-                    {isMember
-                      ? "No upcoming sessions. Check the Discover page to create one!"
-                      : "Join the group to see upcoming sessions"}
-                  </p>
-                </Card>
-              )}
+                        </Link>
+                      </Card>
+                    ))}
+                  </div>
+                ) : (
+                  <Card className="glass-card p-6 text-center border border-border/50">
+                    <p className="text-sm text-muted-foreground">
+                      No previous sessions recorded.
+                    </p>
+                  </Card>
+                )}
+              </div>
             </div>
           </div>
 
