@@ -4,6 +4,7 @@ import type { Metadata } from "next"
 import "./globals.css"
 
 import { ThemeProvider } from "./providers"
+import { Toaster } from "@/components/ui/sonner"
 
 import { Inter, Geist as V0_Font_Geist, Geist_Mono as V0_Font_Geist_Mono, Source_Serif_4 as V0_Font_Source_Serif_4 } from 'next/font/google'
 
@@ -28,7 +29,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.className} antialiased`}>
-        <ThemeProvider>{children}</ThemeProvider>
+        <ThemeProvider>
+          {children}
+          <Toaster />
+        </ThemeProvider>
       </body>
     </html>
   )

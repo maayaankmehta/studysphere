@@ -85,6 +85,15 @@ export default function CreateSessionDialog({ open, onOpenChange, onSessionCreat
     e.preventDefault()
 
     try {
+      // Validate date and time are not in the past
+      const selectedDate = new Date(`${formData.date}T${formData.time}`)
+      const now = new Date()
+
+      if (selectedDate < now) {
+        toast.error("Cannot create a session for a date that has already passed.")
+        return
+      }
+
       setSubmitting(true)
 
       // Prepare the data for submission
