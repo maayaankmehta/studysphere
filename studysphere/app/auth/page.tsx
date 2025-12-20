@@ -183,7 +183,7 @@ export default function AuthPage() {
 
                 <div className="text-center text-sm text-muted-foreground mt-4">
                   <p>Demo credentials:</p>
-                  <p className="font-mono text-xs mt-1">mayank / studysphere</p>
+                  <p className="font-mono text-xs mt-1">razan / password123@#</p>
                 </div>
               </form>
             </TabsContent>

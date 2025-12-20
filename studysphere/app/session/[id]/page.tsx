@@ -51,6 +51,38 @@ export default function SessionDetailPage() {
     }
   }, [sessionId])
 
+  const checkEventPassed = (dateStr: string, timeStr: string) => {
+    try {
+      if (!dateStr || !timeStr) return false
+      
+      // Handle various date formats including "Wednesday, October 22nd"
+      let cleanDate = dateStr
+      
+      // Remove day name if present (e.g., "Wednesday, ")
+      if (cleanDate.includes(",")) {
+        cleanDate = cleanDate.split(",")[1].trim()
+      }
+      
+      // Remove ordinal suffixes (st, nd, rd, th)
+      cleanDate = cleanDate.replace(/(\d+)(st|nd|rd|th)/, "$1")
+      
+      // Extract start time (e.g., "8:00 AM" from "8:00 AM - 10:00 AM")
+      const startTime = timeStr.split("-")[0].trim()
+      
+      // Assume current year as it's not provided in the string
+      const currentYear = new Date().getFullYear()
+      const eventDateStr = `${cleanDate}, ${currentYear} ${startTime}`
+      
+      const eventDate = new Date(eventDateStr)
+      const now = new Date()
+      
+      return now > eventDate
+    } catch (e) {
+      console.error("Error checking if event passed:", e)
+      return false
+    }
+  }
+
   const handleRSVP = async () => {
     try {
       setIsRSVPing(true)
@@ -224,6 +256,21 @@ export default function SessionDetailPage() {
                   <p className="text-xs text-muted-foreground text-center">
                     Get the verification code from the host to earn XP points
                   </p>
+                </div>
+              ) : checkEventPassed(session.date, session.time) ? (
+                <div className="space-y-3">
+                  <div className="p-4 bg-muted rounded-lg text-center border border-border">
+                    <Clock size={24} className="text-muted-foreground mx-auto mb-2" />
+                    <p className="text-sm font-semibold text-muted-foreground">Event has passed</p>
+                    <p className="text-xs text-muted-foreground mt-1 mb-3">
+                      This session is no longer accepting RSVPs
+                    </p>
+                    <Link href={session.group ? `/study-groups/${session.group}` : "/discover"}>
+                      <Button size="sm" variant="outline" className="w-full">
+                        {session.group ? "View Group for More" : "Discover More Sessions"}
+                      </Button>
+                    </Link>
+                  </div>
                 </div>
               ) : (
                 <Button

@@ -47,6 +47,38 @@ export default function StudyGroupDetailPage() {
     }
   }, [groupId])
 
+  const checkEventPassed = (dateStr: string, timeStr: string) => {
+    try {
+      if (!dateStr || !timeStr) return false
+      
+      // Handle various date formats including "Wednesday, October 22nd"
+      let cleanDate = dateStr
+      
+      // Remove day name if present (e.g., "Wednesday, ")
+      if (cleanDate.includes(",")) {
+        cleanDate = cleanDate.split(",")[1].trim()
+      }
+      
+      // Remove ordinal suffixes (st, nd, rd, th)
+      cleanDate = cleanDate.replace(/(\d+)(st|nd|rd|th)/, "$1")
+      
+      // Extract start time (e.g., "8:00 AM" from "8:00 AM - 10:00 AM")
+      const startTime = timeStr.split("-")[0].trim()
+      
+      // Assume current year as it's not provided in the string
+      const currentYear = new Date().getFullYear()
+      const eventDateStr = `${cleanDate}, ${currentYear} ${startTime}`
+      
+      const eventDate = new Date(eventDateStr)
+      const now = new Date()
+      
+      return now > eventDate
+    } catch (e) {
+      console.error("Error checking if event passed:", e)
+      return false
+    }
+  }
+
   const handleJoinGroup = async () => {
     try {
       setIsJoining(true)
@@ -148,9 +180,11 @@ export default function StudyGroupDetailPage() {
             {/* Sessions Section */}
             <div className="space-y-4">
               <h3 className="text-2xl font-bold">Upcoming Sessions</h3>
-              {sessions && sessions.length > 0 ? (
+              {sessions && sessions.filter((session: any) => !checkEventPassed(session.date, session.time)).length > 0 ? (
                 <div className="space-y-3">
-                  {sessions.map((session: any) => (
+                  {sessions
+                    .filter((session: any) => !checkEventPassed(session.date, session.time))
+                    .map((session: any) => (
                     <Card key={session.id} className="glass-card p-4">
                       <Link href={`/session/${session.id}`} className="block hover:opacity-80 transition-opacity">
                         <div className="flex items-start justify-between gap-4">
