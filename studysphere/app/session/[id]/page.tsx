@@ -54,28 +54,28 @@ export default function SessionDetailPage() {
   const checkEventPassed = (dateStr: string, timeStr: string) => {
     try {
       if (!dateStr || !timeStr) return false
-      
+
       // Handle various date formats including "Wednesday, October 22nd"
       let cleanDate = dateStr
-      
+
       // Remove day name if present (e.g., "Wednesday, ")
       if (cleanDate.includes(",")) {
         cleanDate = cleanDate.split(",")[1].trim()
       }
-      
+
       // Remove ordinal suffixes (st, nd, rd, th)
       cleanDate = cleanDate.replace(/(\d+)(st|nd|rd|th)/, "$1")
-      
+
       // Extract start time (e.g., "8:00 AM" from "8:00 AM - 10:00 AM")
       const startTime = timeStr.split("-")[0].trim()
-      
+
       // Assume current year as it's not provided in the string
       const currentYear = new Date().getFullYear()
       const eventDateStr = `${cleanDate}, ${currentYear} ${startTime}`
-      
+
       const eventDate = new Date(eventDateStr)
       const now = new Date()
-      
+
       return now > eventDate
     } catch (e) {
       console.error("Error checking if event passed:", e)
