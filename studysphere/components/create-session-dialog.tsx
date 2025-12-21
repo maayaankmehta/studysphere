@@ -165,7 +165,7 @@ export default function CreateSessionDialog({ open, onOpenChange, onSessionCreat
           </div>
 
           <div>
-            <label className="text-sm font-medium mb-1 block">Group (Optional)</label>
+            <label className="text-sm font-medium mb-1 block">Group</label>
             <Select
               value={formData.group}
               onValueChange={(value) => setFormData({ ...formData, group: value })}
