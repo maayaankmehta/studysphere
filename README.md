@@ -219,10 +219,11 @@ Contributions are welcome!
 ## 📄 License
 
 This project is licensed under the MIT License — see the [LICENSE](LICENSE) file. 
-## 📞 Contact
+## Developed By:
  - Muhammed Razan [@razancodes](https://github.com/razancodes)
  - Mayank Mehta [@maayaankmehta](https://github.com/maayaankmehta)
- 
+ - Mohammed Talib 
+ - Muzammil Zahoor 
 - **Email**: studysphere@outlook.com 
 
 ---
