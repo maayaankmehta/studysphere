@@ -123,17 +123,7 @@ export function SessionChat({ sessionId, sessionTitle, attendeesCount }: Session
                         <p className="text-xs text-muted-foreground">{attendeesCount} participants</p>
                     </div>
                 </div>
-                <div className="flex items-center gap-1">
-                    <Button variant="ghost" size="icon" className="h-9 w-9 text-muted-foreground hover:text-foreground">
-                        <Video size={18} />
-                    </Button>
-                    <Button variant="ghost" size="icon" className="h-9 w-9 text-muted-foreground hover:text-foreground">
-                        <Phone size={18} />
-                    </Button>
-                    <Button variant="ghost" size="icon" className="h-9 w-9 text-muted-foreground hover:text-foreground">
-                        <MoreVertical size={18} />
-                    </Button>
-                </div>
+                
             </div>
 
             {/* Messages Container */}
@@ -192,20 +182,7 @@ export function SessionChat({ sessionId, sessionTitle, attendeesCount }: Session
             {/* Message Input - WhatsApp style */}
             <div className="px-3 py-3 bg-background/80 border-t border-border">
                 <div className="flex items-center gap-2">
-                    <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-9 w-9 text-muted-foreground hover:text-foreground flex-shrink-0"
-                    >
-                        <Smile size={20} />
-                    </Button>
-                    <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-9 w-9 text-muted-foreground hover:text-foreground flex-shrink-0"
-                    >
-                        <Paperclip size={20} />
-                    </Button>
+                    
                     <Input
                         value={newMessage}
                         onChange={(e) => setNewMessage(e.target.value)}
