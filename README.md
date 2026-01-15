@@ -26,13 +26,14 @@ A modern fullstack student collaboration platform that enables users to create a
 - **Django 4.2** - Web framework and ORM [8]
 - **Django REST Framework 3.16** - RESTful API endpoints and serialization
 - **Simple JWT** - JWT token generation and validation 
-- **SQLite** (Development) / **PostgreSQL** (Production) 
+- **PostgreSQL 18** - Production-ready relational database
 - **Python 3.12** - Backend runtime 
 
 ## 📋 Prerequisites
 
 - **Node.js** (v20+) - https://nodejs.org/ 
 - **Python 3.12** 
+- **PostgreSQL** - https://www.postgresql.org/download/
 - **npm** (comes with Node) or **pnpm**
 - **pip** and **virtualenv** (recommended for Python) 
 
@@ -71,19 +72,44 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-### 4. Environment Configuration
+### 4. PostgreSQL Database Setup
+
+#### Install PostgreSQL
+Download and install from https://www.postgresql.org/download/
+
+#### Create Database and User
+Open SQL Shell (psql) or pgAdmin and run:
+```sql
+CREATE DATABASE studysphere;
+CREATE USER studysphere_user WITH PASSWORD 'your_password';
+ALTER ROLE studysphere_user SET client_encoding TO 'utf8';
+ALTER ROLE studysphere_user SET default_transaction_isolation TO 'read committed';
+ALTER ROLE studysphere_user SET timezone TO 'UTC';
+GRANT ALL PRIVILEGES ON DATABASE studysphere TO studysphere_user;
+```
+
+Then connect to the `studysphere` database and grant schema permissions:
+```sql
+\c studysphere
+GRANT ALL ON SCHEMA public TO studysphere_user;
+GRANT CREATE ON SCHEMA public TO studysphere_user;
+```
+
+### 5. Environment Configuration
 Copy `.env.example` to `.env` and configure: 
 ```env
-DATABASE_URL=sqlite:///db.sqlite3
+DATABASE_URL=postgresql://studysphere_user:your_password@localhost:5432/studysphere
 SECRET_KEY=your-secret-key-here
 DEBUG=True
 ALLOWED_HOSTS=localhost,127.0.0.1
 CORS_ALLOWED_ORIGINS=http://localhost:3000
 ```
 
-### 5. Database Setup
+> **Connection URL Format:** `postgresql://USERNAME:PASSWORD@HOST:PORT/DATABASE`
+
+### 6. Run Migrations
 ```bash
-# Run migrations
+# Run migrations to create tables
 python manage.py migrate
 
 # (Optional) Seed database with sample data
@@ -93,7 +119,7 @@ Seed creates test accounts:
 - Admin: `admin` / `admin123`
 - User: `razancodes` / `password123`
 
-### 6. Start Backend Server
+### 7. Start Backend Server
 ```bash
 python manage.py runserver
 ```
@@ -200,7 +226,7 @@ python manage.py showmigrations # View migration status
 ## 🚀 Production Deployment
 
 1. Set `DEBUG=False` and secure `SECRET_KEY` 
-2. Use PostgreSQL (update `DATABASE_URL`) 
+2. Configure PostgreSQL with strong credentials
 3. Set `ALLOWED_HOSTS` for production domains 
 4. Run `python manage.py collectstatic` 
 5. Use Gunicorn WSGI server  
