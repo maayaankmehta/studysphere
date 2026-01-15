@@ -251,5 +251,5 @@ This project is licensed under the MIT License — see the [LICENSE](LICENSE) fi
  - Mohammed Talib 
  - Muzammil Zahoor 
 - **Email**: studysphere@outlook.com 
-
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/maayaankmehta/studysphere)
 ---
