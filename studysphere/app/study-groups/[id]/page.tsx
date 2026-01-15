@@ -1,8 +1,8 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { useParams } from "next/navigation"
-import { Users, CheckCircle, ArrowLeft } from "lucide-react"
+import { useParams, useRouter } from "next/navigation"
+import { Users, CheckCircle, ArrowLeft, LogOut } from "lucide-react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -14,6 +14,7 @@ import Link from "next/link"
 
 export default function StudyGroupDetailPage() {
   const params = useParams()
+  const router = useRouter()
   const { user } = useAuth()
   const groupId = params.id as string
 
@@ -22,6 +23,7 @@ export default function StudyGroupDetailPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [isJoining, setIsJoining] = useState(false)
+  const [isLeaving, setIsLeaving] = useState(false)
 
   useEffect(() => {
     const fetchGroupData = async () => {
@@ -50,28 +52,28 @@ export default function StudyGroupDetailPage() {
   const checkEventPassed = (dateStr: string, timeStr: string) => {
     try {
       if (!dateStr || !timeStr) return false
-      
+
       // Handle various date formats including "Wednesday, October 22nd"
       let cleanDate = dateStr
-      
+
       // Remove day name if present (e.g., "Wednesday, ")
       if (cleanDate.includes(",")) {
         cleanDate = cleanDate.split(",")[1].trim()
       }
-      
+
       // Remove ordinal suffixes (st, nd, rd, th)
       cleanDate = cleanDate.replace(/(\d+)(st|nd|rd|th)/, "$1")
-      
+
       // Extract start time (e.g., "8:00 AM" from "8:00 AM - 10:00 AM")
       const startTime = timeStr.split("-")[0].trim()
-      
+
       // Assume current year as it's not provided in the string
       const currentYear = new Date().getFullYear()
       const eventDateStr = `${cleanDate}, ${currentYear} ${startTime}`
-      
+
       const eventDate = new Date(eventDateStr)
       const now = new Date()
-      
+
       return now > eventDate
     } catch (e) {
       console.error("Error checking if event passed:", e)
@@ -90,6 +92,26 @@ export default function StudyGroupDetailPage() {
       alert(err.response?.data?.detail || "Failed to join group")
     } finally {
       setIsJoining(false)
+    }
+  }
+
+  const handleLeaveGroup = async () => {
+    // Confirmation dialog
+    const confirmed = window.confirm(
+      "Are you sure you want to leave this group? You won't be able to access group sessions until you rejoin."
+    )
+
+    if (!confirmed) return
+
+    try {
+      setIsLeaving(true)
+      await groupsAPI.leave(groupId)
+      // Redirect to study groups page after leaving
+      router.push('/study-groups')
+    } catch (err: any) {
+      console.error("Failed to leave group:", err)
+      alert(err.response?.data?.detail || "Failed to leave group")
+      setIsLeaving(false)
     }
   }
 
@@ -187,25 +209,25 @@ export default function StudyGroupDetailPage() {
                     {sessions
                       .filter((session: any) => !checkEventPassed(session.date, session.time))
                       .map((session: any) => (
-                      <Card key={session.id} className="glass-card p-4">
-                        <Link href={`/session/${session.id}`} className="block hover:opacity-80 transition-opacity">
-                          <div className="flex items-start justify-between gap-4">
-                            <div className="flex-1">
-                              <h4 className="font-semibold mb-1">{session.title}</h4>
-                              <p className="text-sm text-muted-foreground mb-2">{session.course_code}</p>
-                              <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                                <span>📅 {session.date}</span>
-                                <span>🕒 {session.time}</span>
-                                <span>📍 {session.location}</span>
+                        <Card key={session.id} className="glass-card p-4">
+                          <Link href={`/session/${session.id}`} className="block hover:opacity-80 transition-opacity">
+                            <div className="flex items-start justify-between gap-4">
+                              <div className="flex-1">
+                                <h4 className="font-semibold mb-1">{session.title}</h4>
+                                <p className="text-sm text-muted-foreground mb-2">{session.course_code}</p>
+                                <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                                  <span>📅 {session.date}</span>
+                                  <span>🕒 {session.time}</span>
+                                  <span>📍 {session.location}</span>
+                                </div>
                               </div>
+                              <Badge variant="secondary" className="text-xs">
+                                {session.attendees_count || 0} going
+                              </Badge>
                             </div>
-                            <Badge variant="secondary" className="text-xs">
-                              {session.attendees_count || 0} going
-                            </Badge>
-                          </div>
-                        </Link>
-                      </Card>
-                    ))}
+                          </Link>
+                        </Card>
+                      ))}
                   </div>
                 ) : (
                   <Card className="glass-card p-8 text-center border border-border/50">
@@ -226,30 +248,30 @@ export default function StudyGroupDetailPage() {
                     {sessions
                       .filter((session: any) => checkEventPassed(session.date, session.time))
                       .map((session: any) => (
-                      <Card key={session.id} className="glass-card p-4 opacity-75">
-                        <Link href={`/session/${session.id}`} className="block hover:opacity-100 transition-opacity">
-                          <div className="flex items-start justify-between gap-4">
-                            <div className="flex-1">
-                              <h4 className="font-semibold mb-1 text-muted-foreground">{session.title}</h4>
-                              <p className="text-sm text-muted-foreground mb-2">{session.course_code}</p>
-                              <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                                <span>📅 {session.date}</span>
-                                <span>🕒 {session.time}</span>
-                                <span>📍 {session.location}</span>
+                        <Card key={session.id} className="glass-card p-4 opacity-75">
+                          <Link href={`/session/${session.id}`} className="block hover:opacity-100 transition-opacity">
+                            <div className="flex items-start justify-between gap-4">
+                              <div className="flex-1">
+                                <h4 className="font-semibold mb-1 text-muted-foreground">{session.title}</h4>
+                                <p className="text-sm text-muted-foreground mb-2">{session.course_code}</p>
+                                <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                                  <span>📅 {session.date}</span>
+                                  <span>🕒 {session.time}</span>
+                                  <span>📍 {session.location}</span>
+                                </div>
+                              </div>
+                              <div className="flex flex-col items-end gap-2">
+                                <Badge variant="outline" className="text-xs">
+                                  Completed
+                                </Badge>
+                                <span className="text-xs text-muted-foreground">
+                                  {session.attendees_count || 0} attended
+                                </span>
                               </div>
                             </div>
-                            <div className="flex flex-col items-end gap-2">
-                              <Badge variant="outline" className="text-xs">
-                                Completed
-                              </Badge>
-                              <span className="text-xs text-muted-foreground">
-                                {session.attendees_count || 0} attended
-                              </span>
-                            </div>
-                          </div>
-                        </Link>
-                      </Card>
-                    ))}
+                          </Link>
+                        </Card>
+                      ))}
                   </div>
                 ) : (
                   <Card className="glass-card p-6 text-center border border-border/50">
@@ -266,10 +288,22 @@ export default function StudyGroupDetailPage() {
           <div className="lg:col-span-1">
             <div className="glass-card p-6 rounded-lg sticky top-8 space-y-4">
               {isMember ? (
-                <div className="p-4 bg-primary/10 rounded-lg text-center">
-                  <CheckCircle size={24} className="text-primary mx-auto mb-2" />
-                  <p className="text-sm font-semibold">You're a member!</p>
-                </div>
+                <>
+                  <div className="p-4 bg-primary/10 rounded-lg text-center">
+                    <CheckCircle size={24} className="text-primary mx-auto mb-2" />
+                    <p className="text-sm font-semibold">You're a member!</p>
+                  </div>
+                  <Button
+                    variant="destructive"
+                    size="lg"
+                    className="w-full gap-2"
+                    onClick={handleLeaveGroup}
+                    disabled={isLeaving}
+                  >
+                    <LogOut size={18} />
+                    {isLeaving ? "Leaving..." : "Leave Group"}
+                  </Button>
+                </>
               ) : (
                 <Button
                   size="lg"

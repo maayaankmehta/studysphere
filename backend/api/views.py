@@ -17,7 +17,7 @@ from .serializers import (
 from .permissions import IsHostOrReadOnly, IsCreatorOrReadOnly, IsAdminUser
 from .utils import award_xp, XP_REWARDS
 
-
+#class based view
 class StudySessionViewSet(viewsets.ModelViewSet):
     """ViewSet for StudySession CRUD and RSVP"""
     queryset = StudySession.objects.all().select_related('host', 'group').prefetch_related('attendees')
@@ -307,7 +307,7 @@ class LeaderboardViewSet(viewsets.ViewSet):
         if period == 'week':
             # Get users who earned XP in the last week
             week_ago = timezone.now() - timedelta(days=7)
-            # For simplicity, just show top users by XP (would need activity tracking for true weekly)
+            # For simplicity, just show top users by XP 
             users = User.objects.all().order_by('-xp')[:10]
         else:
             # All-time leaderboard
